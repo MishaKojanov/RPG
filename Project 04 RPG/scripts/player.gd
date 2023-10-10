@@ -21,6 +21,7 @@ var max_health = 100
 var stamina = 100
 var max_stamina = 100
 var recovering_stamina = false
+var cooldown_started = false
 var health_width
 var stamina_width
 
@@ -58,17 +59,17 @@ func _physics_process(delta):
 #Move and animate player based based on input	
 func player_movement(delta):
 	#sprinting
-	if recovering_stamina && stamina < 100:
-		stamina += 0.5
+
 	if Input.is_action_pressed("sprint") && stamina > 0:
 		speed = og_speed*1.25
-		stamina -= 0.5
-		recovering_stamina = false
+		usa_stamina(0.5)
 	else:
-		if speed > og_speed:
-			print("strat")
-			$StaminaDelay.start()
 		speed = og_speed/1.25
+	
+	if stamina == 100:
+		recovering_stamina = false
+	if recovering_stamina:
+		stamina += 0.5
 	
 	if Input.is_action_pressed("move_right") && !attacking:
 		current_dir = "right"
@@ -156,17 +157,18 @@ func _on_deal_attack_timer_timeout():
 	$deal_attack_timer.stop()
 	global.player_current_attack = false
 	attacking = false
-	
 
 func attack():
 	var dir = current_dir
-	if Input.is_action_just_pressed("attack"):
+	if Input.is_action_just_pressed("attack") && stamina > 0:
+		if !attacking:
+			usa_stamina(10)
+			$deal_attack_timer.start()
 		global.player_current_attack = true
 		attacking = true
 		if dir == "right":
 			$AnimatedSprite2D.flip_h = false
 			$AnimatedSprite2D.play("side_attack")
-			print("right atatck")
 		if dir == "left":
 			$AnimatedSprite2D.flip_h = true
 			$AnimatedSprite2D.play("side_attack")
@@ -174,12 +176,17 @@ func attack():
 			$AnimatedSprite2D.play("down_attack")
 		if dir == "up":
 			$AnimatedSprite2D.play("up_attack")
-		$deal_attack_timer.start()
 
+func usa_stamina(rigor):
+	stamina -= rigor
+	cooldown_started = true
+	recovering_stamina = false
+	$StaminaDelay.start()
 
 func _on_animated_sprite_2d_animation_finished():
 	dead = true
 
 
 func _on_stamina_delay_timeout():
+	cooldown_started = false
 	recovering_stamina = true

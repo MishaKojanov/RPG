@@ -1,0 +1,89 @@
+[gd_scene load_steps=11 format=3 uid="uid://0fsa4l0gskjt"]
+
+[ext_resource type="Script" path="res://scripts/chest.gd" id="1_etdf4"]
+[ext_resource type="Texture2D" uid="uid://rrfar6n64vh1" path="res://art/objects/chest_01.png" id="2_hgehe"]
+[ext_resource type="FontFile" uid="uid://d22c32gfdt0b0" path="res://art/fonts/m5x7.ttf" id="3_p61lb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_87crm"]
+atlas = ExtResource("2_hgehe")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y2cp2"]
+atlas = ExtResource("2_hgehe")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_20420"]
+atlas = ExtResource("2_hgehe")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1541n"]
+atlas = ExtResource("2_hgehe")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h14eb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_87crm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y2cp2")
+}],
+"loop": true,
+"name": &"closed",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_20420")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1541n")
+}],
+"loop": true,
+"name": &"open",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kilpr"]
+radius = 20.0998
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cf22e"]
+size = Vector2(14, 11.25)
+
+[node name="chest" type="Area2D"]
+z_as_relative = false
+y_sort_enabled = true
+script = ExtResource("1_etdf4")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+y_sort_enabled = true
+sprite_frames = SubResource("SpriteFrames_h14eb")
+animation = &"open"
+frame = 1
+frame_progress = 0.901879
+
+[node name="detection_area" type="CollisionShape2D" parent="."]
+z_index = -20
+y_sort_enabled = true
+shape = SubResource("CircleShape2D_kilpr")
+
+[node name="hint" type="Label" parent="."]
+offset_left = -19.0
+offset_top = -21.0
+offset_right = 22.0
+offset_bottom = -5.0
+theme_override_fonts/font = ExtResource("3_p61lb")
+text = "Press E"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+z_index = -50
+z_as_relative = false
+y_sort_enabled = true
+position = Vector2(0, 5.375)
+shape = SubResource("RectangleShape2D_cf22e")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

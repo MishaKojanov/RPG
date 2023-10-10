@@ -1,0 +1,44 @@
+[gd_scene load_steps=6 format=3 uid="uid://ced08yajgawp3"]
+
+[ext_resource type="Texture2D" uid="uid://j2euemxgmxkw" path="res://art/health/heart.png" id="1_eul5r"]
+[ext_resource type="Script" path="res://scripts/heart.gd" id="1_hr2jv"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ljejc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_eul5r")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6utoa"]
+radius = 23.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_k5qmy"]
+radius = 7.07107
+
+[node name="heart" type="Area2D" groups=["heart"]]
+script = ExtResource("1_hr2jv")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, 2)
+scale = Vector2(0.120417, 0.116419)
+sprite_frames = SubResource("SpriteFrames_ljejc")
+
+[node name="detection_area" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("CircleShape2D_6utoa")
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(0, 1)
+
+[node name="pickup_area" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, -1)
+shape = SubResource("CircleShape2D_k5qmy")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
