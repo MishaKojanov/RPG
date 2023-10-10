@@ -219,7 +219,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_sfppc")
 }],
-"loop": true,
+"loop": false,
 "name": &"defeat",
 "speed": 3.0
 }, {
@@ -416,27 +416,86 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6oli5"]
 size = Vector2(9, 7)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_mps5u"]
-size = Vector2(9, 7)
+[sub_resource type="CircleShape2D" id="CircleShape2D_ek0ot"]
+radius = 7.0
 
-[node name="player" type="CharacterBody2D"]
+[node name="player" type="CharacterBody2D" groups=["player"]]
 y_sort_enabled = true
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_1f2fj")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_m0gda")
-animation = &"down_walk"
+animation = &"defeat"
+frame = 2
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0.5, 14.5)
+position = Vector2(0.5, 13.5)
 shape = SubResource("RectangleShape2D_6oli5")
 
 [node name="player_hitbox" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player_hitbox"]
-position = Vector2(0.5, 14.5)
-shape = SubResource("RectangleShape2D_mps5u")
+position = Vector2(0, 9)
+shape = SubResource("CircleShape2D_ek0ot")
 
 [node name="attack_cooldown" type="Timer" parent="."]
 
 [node name="deal_attack_timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="health_bar" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -7.0
+offset_top = 20.0
+offset_right = 8.0
+offset_bottom = 21.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.419608, 0.784314, 0.262745, 1)
+
+[node name="health_outline" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = 19.0
+offset_right = 9.0
+offset_bottom = 22.0
+color = Color(0, 0, 0, 1)
+
+[node name="stamina_bar" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -7.0
+offset_top = 22.0
+offset_right = 8.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0.607843, 0.984314, 1)
+
+[node name="stamina_outline" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = 21.0
+offset_right = 9.0
+offset_bottom = 24.0
+color = Color(0, 0, 0, 1)
+
+[node name="StaminaDelay" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
+[connection signal="body_entered" from="player_hitbox" to="." method="_on_player_hitbox_body_entered"]
+[connection signal="body_exited" from="player_hitbox" to="." method="_on_player_hitbox_body_exited"]
+[connection signal="timeout" from="attack_cooldown" to="." method="_on_attack_cooldown_timeout"]
+[connection signal="timeout" from="deal_attack_timer" to="." method="_on_deal_attack_timer_timeout"]
+[connection signal="timeout" from="StaminaDelay" to="." method="_on_stamina_delay_timeout"]
